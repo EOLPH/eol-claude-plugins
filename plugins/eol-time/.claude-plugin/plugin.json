@@ -1,6 +1,6 @@
 {
   "name": "eol-time",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Log hours and run your timer in EOL Time (time.eol.agency, EOL's Harvest replacement) from Claude: the EOL Time MCP server plus two skills.",
   "author": {
     "name": "EOL"
@@ -15,12 +15,6 @@
       "description": "Create one at https://time.eol.agency/settings/api-keys. A key starting eol_time_ can only track your time (recommended); one starting eol_full_ can do everything you can in EOL Time.",
       "sensitive": true,
       "required": true
-    },
-    "server_url": {
-      "type": "string",
-      "title": "EOL Time address",
-      "description": "Leave as is unless you were given another EOL Time address (for example a test server, with a key made there).",
-      "default": "https://time.eol.agency"
     }
   }
 }
