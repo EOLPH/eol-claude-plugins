@@ -1,0 +1,14 @@
+{
+  "name": "eol",
+  "owner": {
+    "name": "EOL"
+  },
+  "description": "EOL's Claude plugins: EOL Time time tracking.",
+  "plugins": [
+    {
+      "name": "eol-time",
+      "source": "./plugins/eol-time",
+      "description": "Log hours and run your timer in EOL Time (time.eol.agency) from Claude."
+    }
+  ]
+}
