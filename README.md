@@ -24,7 +24,7 @@ The plugin gives Claude:
 
 Try: "log 1h30 on <project> today in EOL Time", "start my EOL Time timer on <project>", "what am I tracking?".
 
-Change the key later with `/plugin` → `eol-time` → configure, or `claude plugin configure eol-time@eol`.
+Update the plugin with `/plugin marketplace update eol` (in claude.ai: Customize → Plugins → Add → Manage marketplaces → ⋮ → Check for updates). Change the key later with `/plugin` → `eol-time` → configure, or `claude plugin configure eol-time@eol`.
 
 ## Claude Desktop or claude.ai (secondary)
 
