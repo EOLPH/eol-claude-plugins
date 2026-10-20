@@ -26,9 +26,9 @@ Try: "log 1h30 on <project> today in EOL Time", "start my EOL Time timer on <pro
 
 Change the key later with `/plugin` → `eol-time` → configure, or `claude plugin configure eol-time@eol`.
 
-## Install in Claude Desktop or claude.ai
+## Claude Desktop or claude.ai (secondary)
 
-**Customize → Plugins → add marketplace** `EOLPH/eol-claude-plugins`, then install `eol-time`. Plugins added there also reach Claude Code on the same account.
+Claude Code is the main target. In claude.ai or the desktop app, **Customize → Plugins → Add → Add marketplace** `EOLPH/eol-claude-plugins` installs the skills, but those apps don't fill in the key prompt: connecting `eol-time` there asks you to set up the connector by hand. Plugins added there also reach Claude Code on the same account.
 
 ## Troubleshooting
 
