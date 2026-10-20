@@ -1,6 +1,6 @@
 ---
 name: eol-time-timer
-description: Start, stop or check the user's running timer in EOL Time (time.eol.agency, EOL's Harvest replacement). Each person has one timer, and starting a new one stops the old one, so it warns first. Use when the user says start/stop/pause my timer, "what am I tracking", "how long have I been on this", or "start tracking <project>" in EOL Time. For logging a finished block of time, use eol-time-log-hours instead.
+description: Start, stop or check the user's running timer in EOL Time (time.eol.agency, EOL's Harvest replacement). Each person has one timer, and starting a new one stops the old one, so it warns first. Use when the user says start/stop/pause my timer, "what am I tracking", "how long have I been on this", or "start tracking a project" in EOL Time. For logging a finished block of time, use eol-time-log-hours instead.
 compatibility: Needs network access to the EOL Time server and either the EOL Time MCP server or a shell with curl. The user supplies an API key in the EOL_TIME_API_KEY environment variable.
 metadata:
   title: EOL Time timer

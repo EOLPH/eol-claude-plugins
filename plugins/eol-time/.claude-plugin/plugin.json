@@ -1,6 +1,6 @@
 {
   "name": "eol-time",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "Log hours and run your timer in EOL Time (time.eol.agency, EOL's Harvest replacement) from Claude: the EOL Time MCP server plus two skills.",
   "author": {
     "name": "EOL"
