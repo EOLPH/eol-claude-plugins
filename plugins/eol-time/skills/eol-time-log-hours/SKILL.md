@@ -4,7 +4,7 @@ description: Log hours to EOL Time (time.eol.agency, EOL's Harvest replacement) 
 compatibility: Needs network access to the EOL Time server and either the EOL Time MCP server or a shell with curl. The user supplies an API key in the EOL_TIME_API_KEY environment variable.
 metadata:
   title: Log hours in EOL Time
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Log hours in EOL Time
@@ -25,7 +25,7 @@ You write time entries for the signed-in user only, never for anyone else (a man
 ### Key rules
 
 - Never print, echo, log, paste or write the key anywhere. That includes files, commits and chat.
-- A key's start shows its access: `eol_time_` is time tracking only, `eol_full_` is everything the user can do. Keys made before 2026-10-20 have no prefix.
+- To know a key's access, call `eol.workspace.whoami` (MCP): its top-level `key.scope` is `time` (time tracking only) or `full` (everything the user can do). Don't infer it from the tool list. A key's start shows the same thing (`eol_time_` or `eol_full_`; keys made before 2026-10-20 have no prefix), but never ask the user to paste it.
 - Always refer to it as `$EOL_TIME_API_KEY`. If the user pastes a key into the chat, tell them to revoke it at `<base>/settings/api-keys` and mint a new one.
 - The server is `${EOL_TIME_URL:-https://time.eol.agency}`. Every command below already falls back to production, so only set `EOL_TIME_URL` for another server, such as https://time-dev.eol.agency.
 

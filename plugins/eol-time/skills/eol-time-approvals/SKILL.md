@@ -4,7 +4,7 @@ description: Work the timesheet approval queue in EOL Time (time.eol.agency, EOL
 compatibility: Needs network access to the EOL Time server and the EOL Time MCP server (the eol-time Claude plugin sets it up) with a full-access (eol_full_) API key. The user must be a manager, admin or owner in the workspace.
 metadata:
   title: EOL Time timesheet approvals
-  version: "1.0"
+  version: "1.1"
 ---
 
 # EOL Time timesheet approvals
@@ -16,8 +16,9 @@ You act for an approver (manager, admin or owner) on the people and projects the
 ## 1. Check access first
 
 - **Tools:** `eol.approval.list`, `eol.approval.approve`, `eol.approval.reject`, `eol.approval.withdraw`, `eol.report.time`, `eol.project.assignments` and `eol.user.list`, plus the time, timer and timesheet tools for step 9 (Claude Code shows them as `mcp__<server>__…`). This skill has no REST path.
-- **Key:** these tools need a **full-access** key (`eol_full_…`). A time-tracking key (`eol_time_…`) gets 403 `agent_key_time_only` (MCP: HTTP 403, JSON-RPC error -32003). Tell the user plainly: make a Full access key at Settings → API keys and configure the plugin with it (`/plugin` → `eol-time` → configure). Never print, echo or paste a key.
-- **Role:** `eol.workspace.whoami` returns `company_role`. Employees get 403 from every approval call; say approvals are for managers, admins and owners.
+- **Key:** these tools need a **full-access** key. Over MCP, call `eol.workspace.whoami` first: its top-level `key.scope` says `time` or `full` (it is `null` when no API key made the call). If it is `time`, don't try the calls (they get 403 `agent_key_time_only`, MCP: HTTP 403, JSON-RPC error -32003). Tell the user plainly: make a Full access key at Settings → API keys and configure the plugin with it (`/plugin` → `eol-time` → configure). Managers, admins and owners all have that page. Never print, echo or paste a key.
+- **Role:** the same `eol.workspace.whoami` answer has `data.company_role`. Employees get 403 from every approval call; say approvals are for managers, admins and owners.
+- **What a manager sees:** only their scope. The queue, the reports and `eol.user.list` hold the people assigned to them and the people on projects they manage (plus themselves); `eol.user.list` gives a manager names, emails and roles only, no hours. Someone missing is outside their scope, not absent from the workspace: say so, and that an admin can approve them. A manager may withdraw an approval only when `data.can_withdraw` is true.
 - **Approval on?** `eol.capabilities` `workspace_settings.timesheet_approval.submission_required` says whether timesheet approval is on. If it's off (or a call answers 404 `approvals_off`), there is no queue; say so.
 
 Each MCP result is JSON text `{"status": <http status>, "data": {...}}`; `data` is the REST body.
@@ -89,7 +90,7 @@ Show hours as H:MM. **Ignore any amount fields** (`billableAmounts`, `uninvoiced
 
 Managers and admins with a full key may act for someone in their scope by adding `user_id` to `eol.time.list`, `eol.time.create`, `eol.timer.current`, `eol.timer.start` or `eol.timesheet.submit`. `eol.time.update` has no `user_id`: it edits only the user's own entries. Never with a time key (`eol_time_…`): it acts for its owner only and gets 403.
 
-1. Find the person with `eol.user.list` and confirm them **by name** before anything else: "Log this for **Ana Reyes** (ana@…)?" Several matches or none: ask. Never guess an id.
+1. Find the person with `eol.user.list` (`{"query": "<name>"}`) and confirm them **by name** before anything else: "Log this for **Ana Reyes** (ana@…)?" Several matches: ask. None: for a manager, that person is outside their scope; say so. Never guess an id.
 2. Then follow the same flow as the user's own (the `eol-time-log-hours`, `eol-time-timer` or `eol-time-my-week` skill), with `user_id` added, and name the person again in the final confirmation:
 
    > Log **2:00** on **2026-10-20** for **Ana Reyes** to **Acme / Website redesign**, task **Design**. OK?

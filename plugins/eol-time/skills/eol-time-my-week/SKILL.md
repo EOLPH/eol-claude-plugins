@@ -4,7 +4,7 @@ description: Review and submit the user's own week in EOL Time (time.eol.agency,
 compatibility: Needs network access to the EOL Time server and either the EOL Time MCP server (the eol-time Claude plugin sets it up) or a shell with curl. An eol_time_ (time tracking only) key is enough.
 metadata:
   title: Review and submit my week in EOL Time
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Review and submit my week in EOL Time
@@ -15,7 +15,7 @@ You review and submit the signed-in user's **own** week only. Never edit, submit
 
 - **MCP:** use the tools `eol.capabilities`, `eol.time.list`, `eol.timer.current`, `eol.timesheet.list`, `eol.timesheet.submit` and `eol.timesheet.unsubmit` (Claude Code shows them as `mcp__<server>__…`).
 - **No MCP tools:** use REST with `$EOL_TIME_API_KEY` and `${EOL_TIME_URL:-https://time.eol.agency}`, the same way as the `eol-time-log-hours` skill's `references/rest-api.md` (which covers reading and editing entries and the timer). The week's submissions are `GET /api/v1/timesheets/submissions?from=FROM&to=TO`, submitting is `POST /api/v1/timesheets/submissions` with `{"period_start": "YYYY-MM-DD"}`, and taking one back is `DELETE /api/v1/timesheets/submissions/ID`. The bodies match the MCP `data` below. No key yet: `eol-time-log-hours`' `references/setup.md`.
-- **Key:** a time-tracking key (`eol_time_…`) may list, submit and unsubmit the user's own week. Never print, echo or paste a key. If the user pastes one into the chat, tell them to revoke it at Settings → API keys and make a new one.
+- **Key:** a time-tracking key may list, submit and unsubmit the user's own week. To know which key is in use, read `key.scope` (`time` or `full`) from `eol.workspace.whoami`; don't guess it from the tool list. Never print, echo or paste a key. If the user pastes one into the chat, tell them to revoke it at Settings → API keys and make a new one.
 
 Each MCP result is JSON text `{"status": <http status>, "data": {...}}`; `data` is the REST body.
 

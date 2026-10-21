@@ -4,7 +4,7 @@ description: Log, list, show and edit the user's own expenses in EOL Time (time.
 compatibility: Needs network access to the EOL Time server and the EOL Time MCP server (the eol-time Claude plugin sets it up) with a full-access (eol_full_) API key.
 metadata:
   title: Log and edit expenses in EOL Time
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Log and edit expenses in EOL Time
@@ -14,7 +14,7 @@ You write expenses for the signed-in user only. Nothing is saved or changed unti
 ## 1. Check access first
 
 - **Tools:** `eol.expense.categories`, `eol.expense.list`, `eol.expense.show`, `eol.expense.create`, `eol.expense.update` and `eol.project.list` (Claude Code shows them as `mcp__<server>__…`). This skill has no REST path.
-- **Key:** expenses need a **full-access** key (`eol_full_…`). A time-tracking key (`eol_time_…`) gets 403 `agent_key_time_only` (MCP: HTTP 403, JSON-RPC error -32003). Tell the user plainly: make a Full access key at Settings → API keys and configure the plugin with it (`/plugin` → `eol-time` → configure). Never print, echo or paste a key.
+- **Key:** expenses need a **full-access** key. Over MCP, call `eol.workspace.whoami` first: its top-level `key.scope` says `time` or `full` (it is `null` when no API key made the call). If it is `time`, don't try the calls (they get 403 `agent_key_time_only`, MCP: HTTP 403, JSON-RPC error -32003). Tell the user plainly: make a Full access key at Settings → API keys and configure the plugin with it (`/plugin` → `eol-time` → configure). Never print, echo or paste a key.
 - **Module on?** `eol.capabilities` `workspace_settings.modules.expenses` (or `expenses_enabled` in the `eol.expense.categories` answer) says whether expenses are switched on in the workspace. If they're off, say so and stop.
 - **Receipts:** there is no upload here. After saving, tell the user to attach the receipt to the expense in the app (Expenses).
 

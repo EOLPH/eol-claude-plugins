@@ -10,7 +10,7 @@ A time-only key's `tools/list` contains exactly these 16 tools. A call to any ot
 
 | Tool | Arguments | Does |
 |---|---|---|
-| `eol.workspace.whoami` | none | Who am I, which workspace |
+| `eol.workspace.whoami` | none | Who am I, which workspace, and the key: top-level `key` is `{scope: "time"\|"full", name, expires_at}` (`expires_at` null when it never expires) |
 | `eol.project.list` | `search?` | Projects visible to me (same rows as REST `GET /api/v1/projects`) |
 | `eol.task.list` | `project_id?`, `include_archived?` | With `project_id`, the project's task assignments (use `task_id`) |
 | `eol.time.list` | `from`, `to` (YYYY-MM-DD) | My entries in a date range |
