@@ -4,7 +4,7 @@ description: Start, stop or check the user's running timer in EOL Time (time.eol
 compatibility: Needs network access to the EOL Time server and either the EOL Time MCP server or a shell with curl. The user supplies an API key in the EOL_TIME_API_KEY environment variable.
 metadata:
   title: EOL Time timer
-  version: "1.0"
+  version: "1.1"
 ---
 
 # EOL Time timer
@@ -107,3 +107,5 @@ Show the server's message (`errors` or `error`) word for word.
 - **429:** wait the `retry-after` seconds, then retry once.
 
 While a timer runs, only its project, task and note can change. Its duration can't (422 "Stop the timer first").
+
+A running timer blocks submitting the week. To review and submit the week, use the `eol-time-my-week` skill.

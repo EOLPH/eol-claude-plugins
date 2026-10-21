@@ -1,7 +1,7 @@
 {
   "name": "eol-time",
-  "version": "1.0.2",
-  "description": "Log hours and run your timer in EOL Time (time.eol.agency, EOL's Harvest replacement) from Claude: the EOL Time MCP server plus two skills.",
+  "version": "1.1.0",
+  "description": "Log hours, run your timer, submit your week, log expenses and work the approval queue in EOL Time (time.eol.agency, EOL's Harvest replacement) from Claude: the EOL Time MCP server plus five skills.",
   "author": {
     "name": "EOL"
   },
@@ -12,7 +12,7 @@
     "api_key": {
       "type": "string",
       "title": "EOL Time API key",
-      "description": "Create one at https://time.eol.agency/settings/api-keys. A key starting eol_time_ can only track your time (recommended); one starting eol_full_ can do everything you can in EOL Time.",
+      "description": "Create one at https://time.eol.agency/settings/api-keys. A key starting eol_time_ can only track and submit your own time (recommended); one starting eol_full_ can do everything you can in EOL Time, which expenses and approvals need.",
       "sensitive": true,
       "required": true
     }

@@ -8,7 +8,7 @@
     {
       "name": "eol-time",
       "source": "./plugins/eol-time",
-      "description": "Log hours and run your timer in EOL Time (time.eol.agency) from Claude."
+      "description": "Log hours, run your timer, submit your week, log expenses and approve timesheets in EOL Time (time.eol.agency) from Claude."
     }
   ]
 }

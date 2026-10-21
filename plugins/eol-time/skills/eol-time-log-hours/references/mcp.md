@@ -6,7 +6,7 @@
 
 ## Tools a time-only key can call
 
-A time-only key's `tools/list` contains exactly these 11 tools. A call to any other tool is refused with HTTP 403 and JSON-RPC error `-32003`, `data.error: "agent_key_time_only"`.
+A time-only key's `tools/list` contains exactly these 16 tools. A call to any other tool is refused with HTTP 403 and JSON-RPC error `-32003`, `data.error: "agent_key_time_only"`.
 
 | Tool | Arguments | Does |
 |---|---|---|
@@ -14,13 +14,18 @@ A time-only key's `tools/list` contains exactly these 11 tools. A call to any ot
 | `eol.project.list` | `search?` | Projects visible to me (same rows as REST `GET /api/v1/projects`) |
 | `eol.task.list` | `project_id?`, `include_archived?` | With `project_id`, the project's task assignments (use `task_id`) |
 | `eol.time.list` | `from`, `to` (YYYY-MM-DD) | My entries in a date range |
-| `eol.time.create` | `project_id`, `duration_minutes`, `work_date` (required); `task_id`, `note`, `source_metadata`, `dry_run`, `idempotency_key` | Create an entry |
-| `eol.time.update` | `id`, `project_id`, `duration_minutes`, `work_date` (required); `task_id`, `note`, `source_metadata`, `dry_run`, `idempotency_key` | Edit my entry |
+| `eol.time.create` | `project_id`, `work_date` and either `duration_minutes` or `started_time` + `ended_time` (required); `task_id`, `note`, `source_metadata`, `dry_run`, `idempotency_key` | Create an entry |
+| `eol.time.update` | `id`, `project_id`, `work_date` and either `duration_minutes` or `started_time` + `ended_time` (required); `task_id`, `note`, `source_metadata`, `dry_run`, `idempotency_key` | Edit my entry |
 | `eol.time.delete` | `id`; `dry_run`, `idempotency_key` | Delete my entry |
 | `eol.timer.current` | none | My running timer, or `running: false` |
 | `eol.timer.start` | `project_id` (or `timesheet_entry_id`), `task_id`, `note`, `work_date`, `dry_run`, `idempotency_key` | Start my timer (stops any other) |
 | `eol.timer.stop` | `dry_run`, `idempotency_key` | Stop my timer |
-| `eol.capabilities` | none | The tool catalog |
+| `eol.timesheet.list` | `from?`, `to?` | My timesheet submissions (weeks sent for approval), newest first |
+| `eol.timesheet.submit` | `period_start?`; `dry_run`, `idempotency_key` | Submit my week for approval |
+| `eol.timesheet.unsubmit` | `submission_id` or `period_start`; `dry_run`, `idempotency_key` | Take back my pending week |
+| `eol.help.search` | `query`; `top_k?` | Search the in-app help (never reads account data) |
+| `eol.feedback.submit` | `body` (up to 2000 characters); `dry_run`, `idempotency_key` | Send feedback to the EOL Time team |
+| `eol.capabilities` | none | The tool catalog and the workspace's settings |
 
 How results come back:
 

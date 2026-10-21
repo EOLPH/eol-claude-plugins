@@ -7,7 +7,7 @@ The user does steps 1 and 2 themselves. You never see the key, and you never wri
 1. Sign in at https://time.eol.agency.
 2. Open **Settings → API keys** (`https://time.eol.agency/settings/api-keys`) and create a key:
    - **Name:** something like "Claude on my laptop".
-   - **Access:** **Time tracking only** (preselected). It can read projects and tasks and write the user's own time and timer, and nothing else: no invoices, clients, reports or other people's time.
+   - **Access:** **Time tracking only** (preselected). It can read projects and tasks, write the user's own time and timer, submit (and take back) the user's own timesheet, search the in-app help and send feedback, and nothing else: no expenses, approvals, invoices, clients, reports or other people's time. Expenses and approving other people's weeks need **Full access**.
    - **Duration:** 30 days is a sensible default. A key that runs out answers 401; mint a new one then.
 3. Copy the key once; it is never shown again. A time-tracking key starts with `eol_time_` (a full-access one with `eol_full_`). If the API keys page is missing, ask a workspace admin.
 

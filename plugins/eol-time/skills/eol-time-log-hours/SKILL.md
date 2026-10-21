@@ -4,12 +4,12 @@ description: Log hours to EOL Time (time.eol.agency, EOL's Harvest replacement) 
 compatibility: Needs network access to the EOL Time server and either the EOL Time MCP server or a shell with curl. The user supplies an API key in the EOL_TIME_API_KEY environment variable.
 metadata:
   title: Log hours in EOL Time
-  version: "1.0"
+  version: "1.1"
 ---
 
 # Log hours in EOL Time
 
-You write time entries for the signed-in user only, never for anyone else. Nothing is written until the user has confirmed it.
+You write time entries for the signed-in user only, never for anyone else (a manager logging for a teammate uses the `eol-time-approvals` skill). Nothing is written until the user has confirmed it.
 
 ## 1. Check setup
 
@@ -35,6 +35,7 @@ Get four things from the user: **date**, **duration**, **project (and task)** an
 
 - **Date:** default to today in the user's local time (`date +%F`). Turn "yesterday" or "Monday" into `YYYY-MM-DD`.
 - **Duration:** send whole minutes. Examples: "1.5h" is `90`, "1:15" is `75`, "45m" is `45`. Don't round it yourself; the workspace applies its own rounding on reports and invoices.
+- **Clock times** ("9 to 11:30", "from 2pm until 4"): over MCP, send `started_time` and `ended_time` (e.g. `"9:00am"` and `"11:30am"`, or `"14:30"`) instead of `duration_minutes`, never both and never only one; the server works out the duration. Say which you read ("9:00am to 11:30am, 2:30"). The response's `clock_times` is `stored`, or `duration_only` when the workspace keeps durations only; say so then. Over REST, send the minutes.
 - **Note:** use one or two plain sentences about the work. Leave out secrets, keys and customer data that doesn't belong on a timesheet.
 - **"Log what I did today":** you may draft the note and a duration estimate from this conversation and from `git log --since=midnight --author="$(git config user.email)" --oneline`. Present it as a draft; the user confirms or edits it.
 
@@ -89,7 +90,7 @@ Show the server's own message (`errors` or `error`) to the user word for word. D
 | Status | Meaning | What to do |
 |---|---|---|
 | 401 | Key missing, wrong, expired or revoked | Ask the user to mint a new key (setup.md) |
-| 403 `agent_key_time_only` | The key is time-only and this isn't time tracking | Stay within this skill's calls |
+| 403 `agent_key_time_only` | The key is time-only and this isn't time tracking (expenses, approvals and reports need an `eol_full_` key) | Stay within this skill's calls |
 | 403 `errors` | Not allowed, e.g. a locked or approved entry, or a book keeper (who can't track time) | Show the message |
 | 404 | Project, task or entry not visible to the user | Re-list, then ask the user |
 | 422 | A write rule refused it, e.g. "not assigned to this project", task not on the project, archived task, period locked, or a timer still running on that entry | Show the message and ask what to change |
@@ -97,4 +98,4 @@ Show the server's own message (`errors` or `error`) to the user word for word. D
 
 Editing or deleting an entry you just wrote: [references/rest-api.md](references/rest-api.md#edit-or-delete-an-entry), or MCP `eol.time.update` / `eol.time.delete`. Confirm with the user first.
 
-For a running stopwatch rather than a finished block of time, use the `eol-time-timer` skill.
+For a running stopwatch rather than a finished block of time, use the `eol-time-timer` skill. To review the week and submit it for approval (a time-tracking key can), use `eol-time-my-week`. Expenses are `eol-time-expenses`.
