@@ -6,16 +6,17 @@
 
 ## Tools a time-only key can call
 
-A time-only key's `tools/list` contains exactly these 16 tools. A call to any other tool is refused with HTTP 403 and JSON-RPC error `-32003`, `data.error: "agent_key_time_only"`.
+A time-only key's `tools/list` contains exactly these 17 tools. A call to any other tool is refused with HTTP 403 and JSON-RPC error `-32003`, `data.error: "agent_key_time_only"`.
 
 | Tool | Arguments | Does |
 |---|---|---|
 | `eol.workspace.whoami` | none | Who am I, which workspace, and the key: top-level `key` is `{scope: "time"\|"full", name, expires_at}` (`expires_at` null when it never expires) |
 | `eol.project.list` | `search?` | Projects visible to me (same rows as REST `GET /api/v1/projects`) |
 | `eol.task.list` | `project_id?`, `include_archived?` | With `project_id`, the project's task assignments (use `task_id`) |
+| `eol.task.types` | none | The workspace's task types (`id`, `name`): the names `task_type` takes. Empty when the workspace uses none |
 | `eol.time.list` | `from`, `to` (YYYY-MM-DD) | My entries in a date range |
-| `eol.time.create` | `project_id`, `work_date` and either `duration_minutes` or `started_time` + `ended_time` (required); `task_id`, `note`, `source_metadata`, `dry_run`, `idempotency_key` | Create an entry |
-| `eol.time.update` | `id`, `project_id`, `work_date` and either `duration_minutes` or `started_time` + `ended_time` (required); `task_id`, `note`, `source_metadata`, `dry_run`, `idempotency_key` | Edit my entry |
+| `eol.time.create` | `project_id`, `work_date` and either `duration_minutes` or `started_time` + `ended_time` (required); `task_id`, `task_type`, `note`, `source_metadata`, `dry_run`, `idempotency_key` | Create an entry |
+| `eol.time.update` | `id`, `project_id`, `work_date` and either `duration_minutes` or `started_time` + `ended_time` (required); `task_id`, `task_type` (omit to keep it, `""` to clear it), `note`, `source_metadata`, `dry_run`, `idempotency_key` | Edit my entry |
 | `eol.time.delete` | `id`; `dry_run`, `idempotency_key` | Delete my entry |
 | `eol.timer.current` | none | My running timer, or `running: false` |
 | `eol.timer.start` | `project_id` (or `timesheet_entry_id`), `task_id`, `note`, `work_date`, `dry_run`, `idempotency_key` | Start my timer (stops any other) |
@@ -98,7 +99,7 @@ curl -sS -w '\nHTTP %{http_code} retry-after=%header{retry-after}\n' \
 JSON
 ```
 
-Log the time, only after the user has confirmed it. `IDEMPOTENCY_KEY` is a fresh random string.
+Log the time, only after the user has confirmed it. `IDEMPOTENCY_KEY` is a fresh random string. If the user picked a task type (from `eol.task.types`), add `"task_type": "NAME"` to `arguments`; otherwise leave it out.
 
 ```bash eol-request:mcp-log-time
 curl -sS -w '\nHTTP %{http_code} retry-after=%header{retry-after}\n' \

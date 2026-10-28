@@ -4,7 +4,7 @@ description: Log hours to EOL Time (time.eol.agency, EOL's Harvest replacement) 
 compatibility: Needs network access to the EOL Time server and either the EOL Time MCP server or a shell with curl. The user supplies an API key in the EOL_TIME_API_KEY environment variable.
 metadata:
   title: Log hours in EOL Time
-  version: "1.2"
+  version: "1.3"
 ---
 
 # Log hours in EOL Time
@@ -56,6 +56,12 @@ Get four things from the user: **date**, **duration**, **project (and task)** an
    - Write the row's **`task_id`**, not its `id`.
    - **One task:** use it. **The user named one:** match on `task_name`. **Otherwise:** ask, listing the task names.
    - The task decides whether the time is billable, so don't skip it when the project has tasks.
+4. **Task type (optional):** list the workspace's task types.
+   - REST: `GET /api/v1/cli/task_types` (curl in [references/rest-api.md](references/rest-api.md#list-task-types)).
+   - MCP: `eol.task.types`.
+   - **Empty list:** don't mention it; send no `task_type`.
+   - **Otherwise:** offer the names once. If the user picks one (or already named one), send its `name` as `task_type`. Never guess or default one.
+   - It's a label, not billing; the task above decides billable.
 
 Use only ids that came back from these calls in this session.
 
@@ -65,6 +71,8 @@ Use only ids that came back from these calls in this session.
 
    > Log **1:30** on **2026-10-20** to **Acme / Website redesign**, task **Design**, note "Homepage hero variants". OK?
 
+   Name the task type in the same line when one was picked ("type **Meeting**").
+
 2. Create the entry.
    - **REST:** `POST /api/v1/cli/timesheet_entries` (exact curl in [references/rest-api.md](references/rest-api.md#create-an-entry)).
    - **MCP:** `eol.time.create` with:
@@ -73,9 +81,11 @@ Use only ids that came back from these calls in this session.
      {"project_id": 123, "task_id": 45, "duration_minutes": 90, "work_date": "2026-10-20", "note": "Homepage hero variants", "source_metadata": {"tool": "claude", "skill": "eol-time-log-hours"}, "idempotency_key": "<a fresh random string>"}
      ```
 
+     Add `"task_type": "Meeting"` only when the user picked one.
+
      An MCP tool result is JSON text `{"status": <http status>, "data": {...}}`. `data` is the same body REST returns.
 3. Report back from the response's `entry`:
-   - `id`, `project`, `task_name`, `work_date` and `note`;
+   - `id`, `project`, `task_name`, `task_type` (when set), `work_date` and `note`;
    - `duration` (minutes; show it as H:MM);
    - any `billing_warnings`.
 
@@ -93,7 +103,7 @@ Show the server's own message (`errors` or `error`) to the user word for word. D
 | 403 `agent_key_time_only` | The key is time-only and this isn't time tracking (expenses, approvals and reports need an `eol_full_` key) | Stay within this skill's calls |
 | 403 `errors` | Not allowed, e.g. a locked or approved entry, or a book keeper (who can't track time) | Show the message |
 | 404 | Project, task or entry not visible to the user | Re-list, then ask the user |
-| 422 | A write rule refused it, e.g. "not assigned to this project", task not on the project, archived task, period locked, or a timer still running on that entry | Show the message and ask what to change |
+| 422 | A write rule refused it, e.g. "not assigned to this project", task not on the project, archived task, a task type not on the workspace's list, period locked, or a timer still running on that entry | Show the message and ask what to change |
 | 429 | Rate limit (about 120 requests a minute, 30 writes per 10 s per key) | Wait the `Retry-After` seconds (the curl line prints `retry-after=`), then retry once |
 
 Editing or deleting an entry you just wrote: [references/rest-api.md](references/rest-api.md#edit-or-delete-an-entry), or MCP `eol.time.update` / `eol.time.delete`. Confirm with the user first.

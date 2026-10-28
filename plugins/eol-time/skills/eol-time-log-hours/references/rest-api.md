@@ -49,6 +49,17 @@ curl -sS -w '\nHTTP %{http_code} retry-after=%header{retry-after}\n' \
 - Write **`task_id`** into the entry, not `id`.
 - Rows with `archived: true` can't be tracked to.
 
+## List task types
+
+```bash
+curl -sS -w '\nHTTP %{http_code} retry-after=%header{retry-after}\n' \
+  "${EOL_TIME_URL:-https://time.eol.agency}/api/v1/cli/task_types" \
+  -H "Authorization: Bearer $EOL_TIME_API_KEY"
+```
+
+- The response is `{ "task_types": [ { "id", "name" } ] }`, in the workspace's order. An empty list means the workspace uses none.
+- A task type is an optional label, not billing. Send it as `"task_type": "NAME"` (the `name`, exactly as listed) only when the user picked one; a name not on the list is a 422.
+
 ## Create an entry
 
 ```bash eol-request:create-entry
@@ -64,6 +75,7 @@ JSON
 - **200** returns `{ "notice", "entry": { "id", "project", "project_id", "client", "duration", "note", "work_date", "task_id", "task_name", "billable", "billing_warnings", "source", "source_label", ... } }`.
 - `duration` is in minutes.
 - Leave `task_id` out only when the project has no tasks.
+- Add `"task_type": "NAME"` only when the user picked one; the entry then carries `task_type`.
 - Don't send `bill_status` or `billable`. Billability is derived from the project and task, and a sent value is dropped with a warning.
 - With approvals on, the entry also carries `approval_status`, `approval_locked` and `period_locked`.
 
@@ -88,7 +100,7 @@ curl -sS -w '\nHTTP %{http_code} retry-after=%header{retry-after}\n' \
 
 ## Edit or delete an entry
 
-Edit (own entries only). Send all three of `project_id`, `duration_minutes` and `work_date` every time, even when they don't change; a missing one fails the save.
+Edit (own entries only). Send all three of `project_id`, `duration_minutes` and `work_date` every time, even when they don't change; a missing one fails the save. Leave `task_type` out to keep it, or send `"task_type": ""` to clear it.
 
 ```bash eol-request:update-entry
 curl -sS -w '\nHTTP %{http_code} retry-after=%header{retry-after}\n' \
