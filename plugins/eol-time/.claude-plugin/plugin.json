@@ -1,7 +1,7 @@
 {
   "name": "eol-time",
-  "version": "1.2.0",
-  "description": "Log hours (with an optional task type), run your timer, submit your week, log expenses and work the approval queue in EOL Time (time.eol.agency, EOL's Harvest replacement) from Claude: the EOL Time MCP server plus five skills.",
+  "version": "1.3.0",
+  "description": "Log hours (with an optional task type), log a whole day in one message, run your timer, submit your week, log expenses and work the approval queue in EOL Time (time.eol.agency, EOL's Harvest replacement) from Claude. Optional, off by default: record when you work in Claude Code (times and folder names only) and sort it into your timesheet later. The EOL Time MCP server, seven skills and the capture hooks.",
   "author": {
     "name": "EOL"
   },

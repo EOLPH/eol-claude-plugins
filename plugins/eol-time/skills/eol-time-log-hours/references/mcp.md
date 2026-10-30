@@ -6,7 +6,7 @@
 
 ## Tools a time-only key can call
 
-A time-only key's `tools/list` contains exactly these 17 tools. A call to any other tool is refused with HTTP 403 and JSON-RPC error `-32003`, `data.error: "agent_key_time_only"`.
+A time-only key's `tools/list` contains exactly these 22 tools. A call to any other tool is refused with HTTP 403 and JSON-RPC error `-32003`, `data.error: "agent_key_time_only"`.
 
 | Tool | Arguments | Does |
 |---|---|---|
@@ -22,8 +22,13 @@ A time-only key's `tools/list` contains exactly these 17 tools. A call to any ot
 | `eol.timer.start` | `project_id` (or `timesheet_entry_id`), `task_id`, `note`, `work_date`, `dry_run`, `idempotency_key` | Start my timer (stops any other) |
 | `eol.timer.stop` | `dry_run`, `idempotency_key` | Stop my timer |
 | `eol.timesheet.list` | `from?`, `to?` | My timesheet submissions (weeks sent for approval), newest first |
-| `eol.timesheet.submit` | `period_start?`; `dry_run`, `idempotency_key` | Submit my week for approval |
+| `eol.timesheet.submit` | `period_start?`, `discard_unsorted?`; `dry_run`, `idempotency_key` | Submit my week for approval (`discard_unsorted: true` removes my unsorted captured time in it, only after the user says yes) |
 | `eol.timesheet.unsubmit` | `submission_id` or `period_start`; `dry_run`, `idempotency_key` | Take back my pending week |
+| `eol.capture.settings` | none to read; `enabled?`, `paused?`, `idle_minutes?` (5 to 60), `ignored_folders?` to change | My Claude Code time capture: on or off (off by default), paused, idle limit, ignored folders, time zone, unsorted totals |
+| `eol.capture.blocks` | `from?`, `to?` (YYYY-MM-DD, up to 62 days), `status?` (`unsorted` or `removed`) | My captured time (the To sort tray) by day, with time already logged each day |
+| `eol.capture.sort` | `block_ids`, `rows` (`project_id`, `task_id?`, `task_type?`, `minutes`, `note?`); `dry_run`, `idempotency_key` | Turn one day's blocks into entries (the `eol-time-sort-my-time` skill) |
+| `eol.capture.remove` | `block_ids`; `dry_run`, `idempotency_key` | Remove blocks from my tray (restorable 30 days) |
+| `eol.capture.restore` | `block_ids`; `dry_run`, `idempotency_key` | Put removed blocks back |
 | `eol.help.search` | `query`; `top_k?` | Search the in-app help (never reads account data) |
 | `eol.feedback.submit` | `body` (up to 2000 characters); `dry_run`, `idempotency_key` | Send feedback to the EOL Time team |
 | `eol.capabilities` | none | The tool catalog and the workspace's settings |

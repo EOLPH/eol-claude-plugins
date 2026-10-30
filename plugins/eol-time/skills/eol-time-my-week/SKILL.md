@@ -4,7 +4,7 @@ description: Review and submit the user's own week in EOL Time (time.eol.agency,
 compatibility: Needs network access to the EOL Time server and either the EOL Time MCP server (the eol-time Claude plugin sets it up) or a shell with curl. An eol_time_ (time tracking only) key is enough.
 metadata:
   title: Review and submit my week in EOL Time
-  version: "1.1"
+  version: "1.2"
 ---
 
 # Review and submit my week in EOL Time
@@ -13,7 +13,7 @@ You review and submit the signed-in user's **own** week only. Never edit, submit
 
 ## 1. Check setup
 
-- **MCP:** use the tools `eol.capabilities`, `eol.time.list`, `eol.timer.current`, `eol.timesheet.list`, `eol.timesheet.submit` and `eol.timesheet.unsubmit` (Claude Code shows them as `mcp__<server>__…`).
+- **MCP:** use the tools `eol.capabilities`, `eol.time.list`, `eol.timer.current`, `eol.timesheet.list`, `eol.timesheet.submit` and `eol.timesheet.unsubmit` (Claude Code shows them as `mcp__<server>__…`), and `eol.capture.blocks` when it is there.
 - **No MCP tools:** use REST with `$EOL_TIME_API_KEY` and `${EOL_TIME_URL:-https://time.eol.agency}`, the same way as the `eol-time-log-hours` skill's `references/rest-api.md` (which covers reading and editing entries and the timer). The week's submissions are `GET /api/v1/timesheets/submissions?from=FROM&to=TO`, submitting is `POST /api/v1/timesheets/submissions` with `{"period_start": "YYYY-MM-DD"}`, and taking one back is `DELETE /api/v1/timesheets/submissions/ID`. The bodies match the MCP `data` below. No key yet: `eol-time-log-hours`' `references/setup.md`.
 - **Key:** a time-tracking key may list, submit and unsubmit the user's own week. To know which key is in use, read `key.scope` (`time` or `full`) from `eol.workspace.whoami`; don't guess it from the tool list. Never print, echo or paste a key. If the user pastes one into the chat, tell them to revoke it at Settings → API keys and make a new one.
 
@@ -63,8 +63,13 @@ Use a fresh `idempotency_key` on every write. Stop at the first error and show i
 
    > Submit **2026-10-12 to 2026-10-18** for approval: **38:30** over 5 days, plus any expenses in that week. Your approver is told; once they approve it, it's locked. OK?
 
-3. `eol.timesheet.submit` with `{"period_start": "FIRST_DAY", "idempotency_key": "<fresh random string>"}`. Never pass `user_id`; that submits someone else's week.
-4. Report from `data`: `submission.period_start`, `period_end`, `status`, `entry_count` and `expense_count`.
+3. **Unsorted captured time** (only if you have `eol.capture.blocks`): call it with `{"from": "FIRST_DAY", "to": "LAST_DAY"}`. If `data.unsorted_minutes` is above zero, ask exactly this, with the time as H:MM, and wait:
+
+   > You have 1:40 of unsorted time this week. Remove it? Your logged hours will be what counts.
+
+   Yes: submit with `"discard_unsorted": true`; those blocks are removed after the submit (restorable for 30 days). No: submit without it; the blocks stay in the To sort tray. Unsorted time never blocks the submit. To sort it into this week instead, use the `eol-time-sort-my-time` skill first.
+4. `eol.timesheet.submit` with `{"period_start": "FIRST_DAY", "idempotency_key": "<fresh random string>"}`, plus `"discard_unsorted": true` only after a yes in step 3. Never pass `user_id`; that submits someone else's week.
+5. Report from `data`: `submission.period_start`, `period_end`, `status`, `entry_count` and `expense_count`.
 
 Time and expenses go up together. The server refuses the submit (422, with a `code`) when:
 
